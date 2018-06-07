@@ -13,7 +13,6 @@ export default class MDesktop {
     let proxyList = config.proxies || []
 
     proxyList.forEach((proxyItem) => {
-      console.log(proxyItem);
       var src = proxyItem.source
       var target = proxyItem.target
       var pathRewriteValue = {}
@@ -23,7 +22,12 @@ export default class MDesktop {
         changeOrigin: true,
         ws: false,
         pathRewrite: pathRewriteValue,
-        proxyTimeout: 1000
+        proxyTimeout: 1000,
+        onProxyReq: (proxyReq, req, res) => {
+          // add login information to the proxied requests
+          proxyReq.setHeader('md-user', JSON.stringify(req.user));
+          // or log the req
+        }
       }))
     })
   }
