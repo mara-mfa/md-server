@@ -24,7 +24,8 @@ export default class MDesktop {
         target: target,
         changeOrigin: true,
         ws: false,
-        pathRewrite: pathRewriteValue
+        pathRewrite: pathRewriteValue,
+        proxyTimeout: 1000
       }))
     })
 

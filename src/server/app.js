@@ -57,7 +57,7 @@ mDesktop.registerSocket(httpServer)
 mDesktop.registerNats();
 app.use(express.static('dist-client'))
 
-let port = process.env.PORT || config.PORT
+let port = process.env.PORT || config.PORT || 8080
 httpServer.listen(port, function (err) {
   if (err) {
     log.error('Error when starting the server: ' + err)
