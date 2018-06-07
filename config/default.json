@@ -1,0 +1,78 @@
+{
+  "port": 8080,
+  "proxies": [
+    {
+      "source": "/lambda-portlet",
+      "target": "https://6fun4n0qa2.execute-api.eu-west-1.amazonaws.com/dev/"
+    },
+    {
+      "source": "/",
+      "target": "http://localhost:8081"
+    }
+  ],
+  "sources": [
+    "https://6fun4n0qa2.execute-api.eu-west-1.amazonaws.com/dev/rss",
+    "https://6fun4n0qa2.execute-api.eu-west-1.amazonaws.com/dev/os",
+    "https://6fun4n0qa2.execute-api.eu-west-1.amazonaws.com/dev/chart",
+    "http://localhost:9092/",
+    "http://localhost:9093/"
+  ],
+  "portlets": [
+    {
+      "id": "mdMonitorPortlet",
+      "type": "js",
+      "name": "MD Monitor",
+      "class": "mdMonitor.MdMonitor"
+    },
+    {
+      "id": "vuePortlet",
+      "class": "vuePortlet",
+      "type": "vue",
+      "name": "Vue Component"
+    },
+    {
+      "id": "testPortlet",
+      "name": "Test Portlet",
+      "type": "js",
+      "class": "portlet.TestPortlet"
+    },
+    {
+      "id": "reutersBusinessPortlet",
+      "type": "js",
+      "name": "Reuters Business",
+      "url": "/lambda-portlet/rss",
+      "class": "rssPortlet.RssPortlet",
+      "rssUrl": "http://feeds.reuters.com/reuters/technologyNews"
+    },
+    {
+      "id": "bbcRssPortlet",
+      "name": "BBC News",
+      "url": "/lambda-portlet/rss",
+      "class": "rssPortlet.RssPortlet",
+      "rssUrl": "http://feeds.bbci.co.uk/news/rss.xml"
+    },
+    {
+      "id": "osInfoPortlet",
+      "type": "js",
+      "name": "OS Info",
+      "url": "/lambda-portlet/os",
+      "class": "osPortlet.OsPortlet"
+    },
+    {
+      "id": "chartPortlet",
+      "type": "js",
+      "name": "Chart Portlet",
+      "url": "/aws/chart",
+      "class": "chartPortlet.ChartPortlet"
+    }
+  ],
+  "layout": [
+    {"x": 0, "y": 0, "w": 1, "h": 2, "i": "mdMonitorPortlet"},
+    {"x": 0, "y": 1, "w": 1, "h": 2, "i": "vuePortlet"},
+    {"x": 1, "y": 0, "w": 1, "h": 2, "i": "testPortlet"},
+    {"x": 1, "y": 1, "w": 1, "h": 2, "i": "reutersBusinessPortlet"},
+    {"x": 2, "y": 0, "w": 1, "h": 4, "i": "bbcRssPortlet"},
+    {"x": 3, "y": 0, "w": 1, "h": 2, "i": "osInfoPortlet"},
+    {"x": 3, "y": 1, "w": 1, "h": 2, "i": "chartPortlet"}
+  ]
+}

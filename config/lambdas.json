@@ -1,0 +1,57 @@
+{
+  "port": 8080,
+  "sources": [
+    "http://test-portlet:8080/",
+    "https://6fun4n0qa2.execute-api.eu-west-1.amazonaws.com/dev/rss",
+    "https://6fun4n0qa2.execute-api.eu-west-1.amazonaws.com/dev/time",
+    "https://6fun4n0qa2.execute-api.eu-west-1.amazonaws.com/dev/chart",
+    "https://6fun4n0qa2.execute-api.eu-west-1.amazonaws.com/dev/os"
+  ],
+  "portlets": [
+    {
+      "name": "Test Portlet",
+      "url": "/test-portlet/",
+      "class": "portlet.TestPortlet",
+      "proxy": {
+        "source": "/test-portlet",
+        "target": "http://test-portlet:8080"
+      }
+    },
+    {
+      "name": "BBC News",
+      "url": "/lambda-portlet/rss",
+      "class": "rssPortlet.RssPortlet",
+      "proxy": {
+        "source": "/lambda-portlet",
+        "target": "https://6fun4n0qa2.execute-api.eu-west-1.amazonaws.com/dev/"
+      }
+    },
+    {
+      "name": "Time Portlet",
+      "url": "/lambda-portlet/time",
+      "class": "timePortlet.TimePortlet",
+      "proxy": {
+        "source": "/lambda-portlet",
+        "target": "https://6fun4n0qa2.execute-api.eu-west-1.amazonaws.com/dev/"
+      }
+    },
+    {
+      "name": "OS Info",
+      "url": "/lambda-portlet/os",
+      "class": "osPortlet.OsPortlet",
+      "proxy": {
+        "source": "/lambda-portlet",
+        "target": "https://6fun4n0qa2.execute-api.eu-west-1.amazonaws.com/dev/"
+      }
+    },
+    {
+      "name": "Chart Portlet",
+      "url": "/aws/chart",
+      "class": "chartPortlet.ChartPortlet",
+      "proxy": {
+        "source": "/aws",
+        "target": "https://6fun4n0qa2.execute-api.eu-west-1.amazonaws.com/dev/"
+      }
+    }
+  ]
+}
