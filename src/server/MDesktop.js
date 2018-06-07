@@ -9,9 +9,7 @@ const natsServer = process.env.MSGHUB_SERVER || undefined;
 const nats = NATS.connect(natsServer);
 
 export default class MDesktop {
-  /* Method reads all portlets and suck proxy values from them. Then Registers these proxies */
   registerProxies(app) {
-    let portlets = config.portlets || []
     let proxyList = config.proxies || []
 
     proxyList.forEach((proxyItem) => {
@@ -28,27 +26,6 @@ export default class MDesktop {
         proxyTimeout: 1000
       }))
     })
-
-
-    // let proxies = {}
-    // portlets.forEach((portlet) => {
-    //   if (portlet.proxy && portlet.proxy.source) {
-    //     proxies[portlet.proxy.source] = portlet.proxy.target
-    //   }
-    //   delete portlet.proxy
-    // })
-
-    // Object.keys(proxies).forEach((proxySrc) => {
-    //   var proxyTarget = proxies[proxySrc]
-    //   var pathRewriteValue = {}
-    //   pathRewriteValue['^' + proxySrc] = '/'
-    //   app.use(proxySrc, proxy({
-    //     target: proxyTarget,
-    //     changeOrigin: true,
-    //     ws: false,
-    //     pathRewrite: pathRewriteValue
-    //   }))
-    // })
   }
 
   registerSocket(httpServer) {
