@@ -75,7 +75,7 @@ async function getPortletSources() {
         results += portletSource.data
       } catch (err) {
         log.error('Cannot load sources from ' + config.sources[i] + ' (' + err.message + ')')
-        results += 'console.error("Server error: cannot load sources from: ' + config.sources[i] + '");';
+        results += 'console.warn("Server error: cannot load sources from: ' + config.sources[i] + '");';
       }
     }
     log.info('Available sources loaded')
