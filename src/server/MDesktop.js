@@ -5,8 +5,8 @@ import NATS from 'nats'
 import log from './logger'
 
 const natsServer = process.env.MSGHUB_SERVER || undefined;
-
 const nats = NATS.connect(natsServer);
+const MSGHUB_ID = process.env.MSGHUB_ID || 'mdesktop'
 
 export default class MDesktop {
   registerProxies(app) {
@@ -22,7 +22,7 @@ export default class MDesktop {
         changeOrigin: true,
         ws: false,
         pathRewrite: pathRewriteValue,
-        proxyTimeout: 1000,
+        proxyTimeout: 3000,
         onProxyReq: (proxyReq, req, res) => {
           // add login information to the proxied requests
           proxyReq.setHeader('md-user', JSON.stringify(req.user));
@@ -64,9 +64,9 @@ export default class MDesktop {
       this.io.emit(wsSubject, qMsg);
     })
 
-    nats.subscribe('ws.>', (msg, reply, subject) => {
-      var wsSubject = subject.replace(/ws\./, '');
-      log.silly('Received ws coms: ' + wsSubject + ' (nats: ' + subject +')');
+    nats.subscribe(MSGHUB_ID + '.ws.>', (msg, reply, subject) => {
+      var wsSubject = subject.replace(MSGHUB_ID + '.ws\.', '');
+      log.debug('Received ws coms: ' + wsSubject + ' (nats: ' + subject +')');
       this.io.emit(wsSubject, msg);
     });
   }

@@ -72,7 +72,7 @@ async function getPortletSources() {
         let portletSource = await axios({
           method: 'get',
           url: config.sources[i],
-          timeout: 1000
+          timeout: 3000
         });
         results += portletSource.data
       } catch (err) {

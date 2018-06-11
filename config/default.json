@@ -6,7 +6,7 @@
       "target": "https://6fun4n0qa2.execute-api.eu-west-1.amazonaws.com/dev/"
     },
     {
-      "source": "/md-monitor",
+      "source": "/mdMonitor",
       "target": "http://localhost:9092/"
     },
     {
@@ -28,7 +28,7 @@
   ],
   "portlets": [
     {
-      "id": "mdMonitorPortlet",
+      "id": "mdMonitor",
       "type": "js",
       "name": "MD Monitor",
       "class": "mdMonitor.MdMonitor"
@@ -76,9 +76,9 @@
     }
   ],
   "layout": [
-//    {"x": 0, "y": 0, "w": 1, "h": 2, "i": "mdMonitorPortlet"}
-    {"x": 0, "y": 1, "w": 1, "h": 2, "i": "vuePortlet"},
-    {"x": 1, "y": 0, "w": 1, "h": 2, "i": "testPortlet"}
+    {"x": 0, "y": 0, "w": 2, "h": 2, "i": "mdMonitor"},
+    {"x": 2, "y": 0, "w": 2, "h": 2, "i": "vuePortlet"}
+//    {"x": 1, "y": 0, "w": 1, "h": 2, "i": "testPortlet"}
 //    {"x": 1, "y": 1, "w": 1, "h": 2, "i": "reutersBusinessPortlet"},
 //    {"x": 2, "y": 0, "w": 1, "h": 4, "i": "bbcRssPortlet"},
 //    {"x": 3, "y": 0, "w": 1, "h": 2, "i": "osInfoPortlet"},
