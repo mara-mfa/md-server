@@ -12,6 +12,8 @@ router.get('/', (req, res, next) => {
 })
 
 router.get('/sources', async (req, res, next) => {
+  portletSources = await getPortletSources()
+  portletMap = buildPortletMap()
   if (!portletSources) {
     portletSources = await getPortletSources()
     portletMap = buildPortletMap()
