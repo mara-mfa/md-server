@@ -7,4 +7,5 @@ COPY . .
 RUN npm prune --only=production
 
 EXPOSE 8080
-CMD [ "npm", "start" ]
+#CMD [ "npm", "start" ]
+CMD ["sh"]
