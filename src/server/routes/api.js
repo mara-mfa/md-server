@@ -44,10 +44,11 @@ async function handleApiCall (req, res, next) {
   }, (err, response) => {
     if (err) {
       log.error('Error when calling grpc: ' + err.message)
+      res.status(500).send(err.message)
       return
     }
     res.send(response.message)
-    // log.info('GRPC response: ' + response.message)
+    log.info('GRPC response: ' + response.message)
   })
 
 

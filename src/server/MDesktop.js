@@ -57,7 +57,7 @@ export default class MDesktop {
   registerNats() {
     nats.subscribe('ws.broadcast.>', (msg, reply, subject) => {
       let wsSubject = subject.replace(/ws\.broadcast\./, '');
-      log.debug('Received broadcast request: ' + wsSubject + ' (nats: ' + subject +')');
+      log.silly('Received broadcast request: ' + wsSubject + ' (nats: ' + subject +')');
       let qMsg = JSON.parse(msg)
       let context = qMsg.context
       let message = qMsg.message
@@ -66,7 +66,7 @@ export default class MDesktop {
 
     nats.subscribe(MSGHUB_ID + '.ws.>', (msg, reply, subject) => {
       var wsSubject = subject.replace(MSGHUB_ID + '.ws\.', '');
-      log.debug('Received ws coms: ' + wsSubject + ' (nats: ' + subject +')');
+      log.silly('Received ws coms: ' + wsSubject + ' (nats: ' + subject +')');
       this.io.emit(wsSubject, msg);
     });
   }
