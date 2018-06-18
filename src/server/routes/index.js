@@ -4,6 +4,7 @@ import api from './api'
 import ws from './ws'
 import layout from './layout'
 import user from './user'
+import md from './md'
 
 const router = express.Router();
 router.get('/', function(req, res, next) {
@@ -15,4 +16,5 @@ router.use('/layout', layout)
 router.use('/api', api)
 router.use('/ws', ws)
 router.use('/user', user)
+router.use('/md', md)
 export default router
