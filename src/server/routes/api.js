@@ -27,32 +27,12 @@ async function handleApiCall (req, res, next) {
     auth: req.user
   })
   // Invoke function
-  // try {
-  //   let endpoint = MSGHUB_ID + '.' + component + '.' + method
-  //   let results = await invoke(endpoint, params)
-  //   res.send(results);
-  // } catch (err) {
-  //   res.status(500).send(err.message)
-  // }
-
-  // Test - call using grpc
-  var proto = grpc.load(__dirname + '/../proto/helloworld.proto').helloworld
-  var client = new proto.Greeter('md-monitor:50051', grpc.credentials.createInsecure())
-  // var client = new proto.Greeter('md-monitor:50051', grpc.credentials.createInsecure(), {"grpc.lb_policy_name": "round_robin"})
-  var method = ::client['sayHello']
-  method({
-    name: 'MDESKTOP'
-  }, (err, response) => {
-    if (err) {
-      log.error('Error when calling grpc: ' + err.message)
-      res.status(500).send(err.message)
-      return
-    }
-    res.send(response.message)
-    log.info('GRPC response: ' + response.message)
-  })
-
-
-
+  try {
+    let endpoint = MSGHUB_ID + '.' + component + '.' + method
+    let results = await invoke(endpoint, params)
+    res.send(results);
+  } catch (err) {
+    res.status(500).send(err.message)
+  }
 }
 
