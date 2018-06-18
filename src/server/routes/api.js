@@ -37,7 +37,8 @@ async function handleApiCall (req, res, next) {
 
   // Test - call using grpc
   var proto = grpc.load(__dirname + '/../proto/helloworld.proto').helloworld
-  var client = new proto.Greeter(`${component}:50051`, grpc.credentials.createInsecure())
+  var client = new proto.Greeter('md-monitor:50051', grpc.credentials.createInsecure())
+  // var client = new proto.Greeter('md-monitor:50051', grpc.credentials.createInsecure(), {"grpc.lb_policy_name": "round_robin"})
   var method = ::client['sayHello']
   method({
     name: 'MDESKTOP'
