@@ -1,4 +1,5 @@
 import grpc from 'grpc'
+//import protoLoader from '@grpc/proto-loader'
 import express from 'express';
 import config from 'config'
 const tempy = require('tempy');
@@ -7,9 +8,17 @@ const fs = require('fs');
 
 import log from "../logger";
 const router = express.Router()
+const protoLoader = require('@grpc/proto-loader');
+
+let protoDict = {}
 
 router.get('/', function(req, res, next) {
   res.send('grpc root');
+})
+
+router.get('/flush-cache', function(req, res, next) {
+  protoDict = {}
+  res.send('Proto cache cleared')
 })
 
 router.get('/:component/:method/:params', handleApiCall)
@@ -31,34 +40,49 @@ async function handleApiCall (req, res, next) {
     if (!grpcDef) {
       throw new Error(`Missing GRPC definition for component '${component}'`)
     }
-    if (!grpcDef.endPoint || !grpcDef.pkg || !grpcDef.service || !grpcDef.protoLocation) {
+    if (!grpcDef.endPoint || !grpcDef.protoLocation) {
       throw new Error(`Missing [endpoint/pkg/service/protoLocation] for component '${component}'`)
     }
 
-    let {endPoint, pkg, service, protoLocation} = grpcDef
+    let {endPoint, protoLocation} = grpcDef
+
+
+    if (!protoDict[protoLocation]) {
+      let protoFile = await loadProtoFile(protoLocation)
+      protoDict[protoLocation] = protoLoader.loadSync(protoFile, {})
+    }
 
     // Load proto file
-    let protoFile = await loadProtoFile(protoLocation)
-    let grcpProto = grpc.load(protoFile)[pkg]
-    if (!grcpProto) {
-      throw new Error(`Package '${pkg}' not found in GRPC proto file for component '${component}' (${protoLocation})`)
-    }
-    if (!grcpProto[service]) {
-      throw new Error(`Service '${service}' not found in GRPC proto file for component '${component}' (${protoLocation})`)
-    }
-    let grcpClient = new grcpProto[service](endPoint, grpc.credentials.createInsecure())
+    let grpcObjectDef = grpc.loadPackageDefinition(protoDict[protoLocation])
+    let defaultPackage = Object.keys(grpcObjectDef)
+    let defaultPkgObject = grpcObjectDef[defaultPackage]
+    let defaultServiceName = Object.keys(defaultPkgObject)[0]
+    let defaultServiceObject = defaultPkgObject[defaultServiceName]
+
+    let grcpClient = new defaultServiceObject(endPoint, grpc.credentials.createInsecure())
     if (!grcpClient[method]) {
       res.status(500).send(`Method '${method}' does not exist`)
       return
     }
-    ::grcpClient[method]({name: 'MDESKTOP'}, (err, response) => {
+
+    let methodSignature = `${defaultPackage}.${defaultServiceName}.${method} (endpoint: ${endPoint})`
+    log.debug(`Calling ${methodSignature}`)
+
+    let methodCall = ::grcpClient[method]
+    let methodParams = {
+      name: 'MDESKTOP',
+      _userId: req.user.id,
+      _userEmail: req.user.email
+    }
+
+    methodCall(methodParams, (err, response) => {
       if (err) {
         log.error('Error when calling grpc: ' + err.message)
         res.status(500).send(err.message)
         return
       }
+      log.debug(`... response from ${methodSignature}`)
       res.send(response.message)
-      log.info('GRPC response: ' + response.message)
     })
 
 
@@ -72,7 +96,7 @@ function loadProtoFile(url) {
   return new Promise((resolve, reject) => {
     let fileName = tempy.file()
     let file = fs.createWriteStream(fileName)
-    http.get(url, (response) => {
+    let request = http.get(url, (response) => {
       const { statusCode } = response;
       if (statusCode !== 200) {
         reject(`Error when downloading proto file from ${url}. HTTP status = ${statusCode}`)
@@ -81,6 +105,9 @@ function loadProtoFile(url) {
         resolve(fileName)
         log.debug(`Successfully downloaded proto file from ${url}`)
       }
+    })
+    request.on('error', (err) => {
+      reject(`Error when downloading proto file from ${url}: ${err.message}`)
     })
   })
 }

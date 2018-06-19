@@ -34,9 +34,7 @@
       "class": "mdMonitor.MdMonitor",
       "grpc": {
         "endPoint": "localhost:50051",
-        "pkg": "helloworld",
-        "service": "Greeter",
-        "protoLocation": "http://localhost:8081/helloworld.proto"
+        "protoLocation": "http://localhost:9092/grpc"
       }
     },
     "vuePortlet": {
