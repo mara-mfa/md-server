@@ -1,9 +1,6 @@
 import express from 'express'
-import config from 'config'
-import NATS from 'nats'
+import log from '../logger'
 const router = express.Router()
-const natsServer = process.env.MSGHUB_SERVER || config.MSGHUB_SERVER || undefined
-const nats = NATS.connect(natsServer)
 
 router.get('/', (req, res, next) => {
   res.send('WS root')
@@ -20,8 +17,15 @@ router.get('/:queue/:msg', (req, res, next) => {
     context: context,
     message: msg
   }
-  nats.publish('ws.broadcast.' + queue, JSON.stringify(qMsg))
-  res.send({message: 'Message sent to queue: ' + queue})
+  if (global.mdHub && global.mdHub.publish) {
+    global.mdHub.publish('ws.broadcast.' + queue, JSON.stringify(qMsg))
+    res.send({message: 'Message sent to queue: ' + queue})
+  } else {
+    var msg = `Broadcast message stopped. NATS is disabled or mdHub is not available`
+    log.error(msg)
+    res.status(500).send({message: msg})
+  }
+
 })
 
 export default router

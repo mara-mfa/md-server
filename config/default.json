@@ -12,10 +12,6 @@
     {
       "source": "/vuePortlet",
       "target": "http://localhost:9093/"
-    },
-    {
-      "source": "/",
-      "target": "http://localhost:8081"
     }
   ],
   "sources": [

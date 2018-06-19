@@ -3,10 +3,11 @@
   "version": "1.0.0",
   "description": "MDesktop server application",
   "respository": "https://bitbucket.org/praguematica/mdesktop-server/",
-  "main": "src/server/app.js",
+  "main": "src/server.js",
   "scripts": {
-    "dev": "nodemon src/server/app.js --exec babel-node --presets env",
-    "start": "babel-node src/server/app.js --presets env",
+    "dev": "nodemon src/server.js --exec babel-node --presets env",
+    "dev-cli": "nodemon src/cli.js --exec babel-node --presets env",
+    "start": "babel-node src/server.js --presets env",
     "lint": "eslint --ext .js src",
     "lintfix": "eslint --fix --ext .js src"
   },
@@ -27,7 +28,7 @@
     "grpc": "^1.13.0-pre1",
     "http-proxy-middleware": "^0.18.0",
     "ip": "^1.1.5",
-    "md-lib": "^1.4.18",
+    "md-lib": "^1.4.19",
     "morgan": "^1.9.0",
     "nats": "^0.8.10",
     "passport": "^0.4.0",
