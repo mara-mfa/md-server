@@ -33,10 +33,9 @@ export default class MdServer {
       name: 'mdesktop', keys: [this.SESSION_SECRET], maxAge: 24 * 60 * 60 * 1000
     })
 
-
     if (!this.DISABLE_NATS) {
-      const MdMessageHub = require('md-lib/server/MdMessageHub')
-      global.mdHub = new MdMessageHub.default(this.MSGHUB_ID, this.MSGHUB_CLIENT)
+      const MdMessageHub = require('md-lib/server/MdMessageHub').default
+      global.mdHub = new MdMessageHub(this.MSGHUB_ID, this.MSGHUB_CLIENT)
       global.mdHub.connect(this.MSGHUB_SERVER).then(() => {
         log.info(`Successfully connected to messaging server ${this.MSGHUB_SERVER}`)
       }, (err) => {
@@ -72,7 +71,6 @@ export default class MdServer {
     this.DISABLE_NATS || this.registerNats()
     this.registerProxies(app)
 
-
     app.use(express.static('dist-client'))
 
     httpServer.listen(this.PORT, (err) => {
@@ -94,7 +92,7 @@ export default class MdServer {
     let proxyList = this.DISABLE_PROXY ? [] : config.proxies
     if (this.WEB_CLIENT) {
       proxyList.push({
-        source: "/",
+        source: '/',
         target: this.WEB_CLIENT
       })
       log.info(`'root (/) is pointing to web client on address ${this.WEB_CLIENT} and will be accessible on '/'`)

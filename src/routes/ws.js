@@ -21,11 +21,10 @@ router.get('/:queue/:msg', (req, res, next) => {
     global.mdHub.publish('ws.broadcast.' + queue, JSON.stringify(qMsg))
     res.send({message: 'Message sent to queue: ' + queue})
   } else {
-    var msg = `Broadcast message stopped. NATS is disabled or mdHub is not available`
-    log.error(msg)
-    res.status(500).send({message: msg})
+    var errMessage = `Broadcast message stopped. NATS is disabled or mdHub is not available`
+    log.error(errMessage)
+    res.status(500).send({message: errMessage})
   }
-
 })
 
 export default router
