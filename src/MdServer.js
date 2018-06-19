@@ -16,7 +16,7 @@ export default class MdServer {
     this.DISABLE_PROXY = process.env.DISABLE_PROXY || 0
     this.DISABLE_AUTH = process.env.DISABLE_AUTH || 0
     this.DISABLE_SOCKETS = process.env.DISABLE_SOCKETS || 0
-    this.WEB_CLIENT = process.env.UI_TARGET
+    this.WEB_CLIENT = process.env.WEB_CLIENT
 
     this.MSGHUB_SERVER = process.env.MSGHUB_SERVER || undefined
     this.MSGHUB_ID = process.env.MSGHUB_ID || 'mdesktop'
