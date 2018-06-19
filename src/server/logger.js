@@ -1,5 +1,5 @@
-import winston from 'winston';
-const level = process.env.LOG_LEVEL || 'debug';
+import winston from 'winston'
+const level = process.env.LOG_LEVEL || 'debug'
 
 export default new winston.Logger({
   transports: [
@@ -8,8 +8,8 @@ export default new winston.Logger({
       prettyPrint: true,
       colorize: true,
       timestamp: function () {
-        return (new Date()).toISOString();
+        return (new Date()).toISOString()
       }
     })
   ]
-});
+})

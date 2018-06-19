@@ -6,7 +6,7 @@ import passport from 'passport'
 import http from 'http'
 import MdMessageHub from 'md-lib/server/MdMessageHub'
 import MDesktop from './MDesktop'
-import mdRoute from './routes/index';
+import mdRoute from './routes/index'
 import authRoute from './auth'
 import log from './logger'
 
@@ -17,7 +17,7 @@ const DISABLE_AUTH = process.env.DISABLE_AUTH || 0
 const SESSION_SECRET = process.env.SESSION_SECRET || 'jcIp866jEH'
 
 var cookieSes = cookieSession({
-  name: 'mdesktop', keys: ['SESSION_SECRET'], maxAge: 24 * 60 * 60 * 1000
+  name: 'mdesktop', keys: [SESSION_SECRET], maxAge: 24 * 60 * 60 * 1000
 })
 
 global.mdHub = new MdMessageHub(MSGHUB_ID, MSGHUB_CLIENT)
@@ -34,10 +34,9 @@ let httpServer = http.Server(app)
 
 app.use(cookieSes)
 app.use(bodyParser.urlencoded({extended: false}))
-app.use(passport.initialize());
-app.use(passport.session());
+app.use(passport.initialize())
+app.use(passport.session())
 app.use('/auth', authRoute)
-
 
 app.use('*', (req, res, next) => {
   if (!req.user && !DISABLE_AUTH) {
@@ -50,11 +49,10 @@ app.use('*', (req, res, next) => {
   next()
 })
 
-
 app.use('/md', mdRoute)
 mDesktop.registerProxies(app)
 mDesktop.registerSocket(httpServer)
-mDesktop.registerNats();
+mDesktop.registerNats()
 app.use(express.static('dist-client'))
 
 let port = process.env.PORT || config.PORT || 8080
@@ -63,11 +61,11 @@ httpServer.listen(port, function (err) {
     log.error('Error when starting the server: ' + err)
   }
   log.info('mDesktop Server running on port ' + port)
-});
+})
 
 // Cleanup
-process.on('exit', mDesktop.cleanup);
-process.on('SIGINT', mDesktop.cleanup);
-process.on('SIGUSR1', mDesktop.cleanup);
-process.on('SIGUSR2', mDesktop.cleanup);
-process.on('uncaughtException', mDesktop.cleanup);
+process.on('exit', mDesktop.cleanup)
+process.on('SIGINT', mDesktop.cleanup)
+process.on('SIGUSR1', mDesktop.cleanup)
+process.on('SIGUSR2', mDesktop.cleanup)
+process.on('uncaughtException', mDesktop.cleanup)

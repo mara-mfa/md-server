@@ -4,12 +4,12 @@ import socket from 'socket.io'
 import NATS from 'nats'
 import log from './logger'
 
-const natsServer = process.env.MSGHUB_SERVER || undefined;
-const nats = NATS.connect(natsServer);
+const natsServer = process.env.MSGHUB_SERVER || undefined
+const nats = NATS.connect(natsServer)
 const MSGHUB_ID = process.env.MSGHUB_ID || 'mdesktop'
 
 export default class MDesktop {
-  registerProxies(app) {
+  registerProxies (app) {
     let proxyList = config.proxies || []
 
     proxyList.forEach((proxyItem) => {
@@ -25,59 +25,58 @@ export default class MDesktop {
         proxyTimeout: 3000,
         onProxyReq: (proxyReq, req, res) => {
           // add login information to the proxied requests
-          proxyReq.setHeader('md-user', JSON.stringify(req.user));
+          proxyReq.setHeader('md-user', JSON.stringify(req.user))
           // or log the req
         }
       }))
     })
   }
 
-  registerSocket(httpServer) {
-    this.io = socket(httpServer);
-    //this.io.set('transports', ['websocket']);
-    this.io.on('connection', this.onIoConnection.bind(this));
+  registerSocket (httpServer) {
+    this.io = socket(httpServer)
+    // this.io.set('transports', ['websocket']);
+    this.io.on('connection', this.onIoConnection.bind(this))
   }
 
-  onIoConnection(socket) {
-    var socketId = socket.id;
-    var clientIp = socket.request.connection.remoteAddress;
-    var message = 'Socket id ' + socketId + ' connected from ' + clientIp;
-    socket.emit('mdesktop', message);
+  onIoConnection (socket) {
+    var socketId = socket.id
+    var clientIp = socket.request.connection.remoteAddress
+    var message = 'Socket id ' + socketId + ' connected from ' + clientIp
+    socket.emit('mdesktop', message)
 
     socket.on('disconnect', () => {
-      log.debug('Socket id ' + socketId + ' disconnected from ' + clientIp);
-      log.debug('user disconnected');
-    });
+      log.debug('Socket id ' + socketId + ' disconnected from ' + clientIp)
+      log.debug('user disconnected')
+    })
 
     socket.on('refresh', (msg) => {
-      socket.emit('refresh', true);
+      socket.emit('refresh', true)
     })
   }
 
-  registerNats() {
+  registerNats () {
     nats.subscribe('ws.broadcast.>', (msg, reply, subject) => {
-      let wsSubject = subject.replace(/ws\.broadcast\./, '');
-      log.silly('Received broadcast request: ' + wsSubject + ' (nats: ' + subject +')');
+      let wsSubject = subject.replace(/ws\.broadcast\./, '')
+      log.silly('Received broadcast request: ' + wsSubject + ' (nats: ' + subject + ')')
       let qMsg = JSON.parse(msg)
-      let context = qMsg.context
-      let message = qMsg.message
-      this.io.emit(wsSubject, qMsg);
+      // let context = qMsg.context
+      // let message = qMsg.message
+      this.io.emit(wsSubject, qMsg)
     })
 
     nats.subscribe(MSGHUB_ID + '.ws.>', (msg, reply, subject) => {
-      var wsSubject = subject.replace(MSGHUB_ID + '.ws\.', '');
-      log.silly('Received ws coms: ' + wsSubject + ' (nats: ' + subject +')');
-      this.io.emit(wsSubject, msg);
-    });
+      var wsSubject = subject.replace(MSGHUB_ID + '.ws.', '')
+      log.silly('Received ws coms: ' + wsSubject + ' (nats: ' + subject + ')')
+      this.io.emit(wsSubject, msg)
+    })
   }
 
-  cleanup(err) {
+  cleanup (err) {
     if (err) {
       log.error(err.message)
       log.debug(err)
     }
-    nats.close();
-    process.exit(0);
+    nats.close()
+    process.exit(0)
   }
 }
-

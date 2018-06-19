@@ -7,8 +7,8 @@ import user from './user'
 import md from './md'
 import grpc from './grpc'
 
-const router = express.Router();
-router.get('/', function(req, res, next) {
+const router = express.Router()
+router.get('/', function (req, res, next) {
   res.send('mDesktop Root')
 })
 

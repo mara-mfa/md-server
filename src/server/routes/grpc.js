@@ -1,22 +1,21 @@
 import grpc from 'grpc'
-//import protoLoader from '@grpc/proto-loader'
-import express from 'express';
+import express from 'express'
 import config from 'config'
-const tempy = require('tempy');
-const http = require('http');
-const fs = require('fs');
 
-import log from "../logger";
+import log from '../logger'
+const tempy = require('tempy')
+const http = require('http')
+const fs = require('fs')
 const router = express.Router()
-const protoLoader = require('@grpc/proto-loader');
+const protoLoader = require('@grpc/proto-loader')
 
 let protoDict = {}
 
-router.get('/', function(req, res, next) {
-  res.send('grpc root');
+router.get('/', function (req, res, next) {
+  res.send('grpc root')
 })
 
-router.get('/flush-cache', function(req, res, next) {
+router.get('/flush-cache', function (req, res, next) {
   protoDict = {}
   res.send('Proto cache cleared')
 })
@@ -33,7 +32,7 @@ async function handleApiCall (req, res, next) {
     var params = JSON.parse(decodeURIComponent(req.params.params || '{}'))
     // Inject context
     params.context = {
-      auth: req.user,
+      auth: req.user
     }
 
     let grpcDef = (config.portlets[component] || {}).grpc
@@ -46,7 +45,6 @@ async function handleApiCall (req, res, next) {
 
     let {endPoint, protoLocation} = grpcDef
 
-
     if (!protoDict[protoLocation]) {
       let protoFile = await loadProtoFile(protoLocation)
       log.debug(`GRPC proto file stored:  ${protoFile}`)
@@ -58,9 +56,9 @@ async function handleApiCall (req, res, next) {
     let defaultPackage = Object.keys(grpcObjectDef)
     let defaultPkgObject = grpcObjectDef[defaultPackage]
     let defaultServiceName = Object.keys(defaultPkgObject)[0]
-    let defaultServiceObject = defaultPkgObject[defaultServiceName]
+    let DefaultServiceObject = defaultPkgObject[defaultServiceName]
 
-    let grcpClient = new defaultServiceObject(endPoint, grpc.credentials.createInsecure())
+    let grcpClient = new DefaultServiceObject(endPoint, grpc.credentials.createInsecure())
     if (!grcpClient[method]) {
       res.status(500).send(`Method '${method}' does not exist`)
       return
@@ -85,22 +83,20 @@ async function handleApiCall (req, res, next) {
       log.debug(`... response from ${methodSignature}`)
       res.send(response.message)
     })
-
-
   } catch (err) {
     log.error(err)
     res.status(500).send(err.message)
   }
 }
 
-function loadProtoFile(url) {
+function loadProtoFile (url) {
   return new Promise((resolve, reject) => {
     let fileName = tempy.file()
     let file = fs.createWriteStream(fileName)
     let request = http.get(url, (response) => {
-      const { statusCode } = response;
+      const { statusCode } = response
       if (statusCode !== 200) {
-        reject(`Error when downloading proto file from ${url}. HTTP status = ${statusCode}`)
+        reject(new Error(`Error when downloading proto file from ${url}. HTTP status = ${statusCode}`))
       } else {
         response.pipe(file)
         resolve(fileName)
@@ -108,8 +104,7 @@ function loadProtoFile(url) {
       }
     })
     request.on('error', (err) => {
-      reject(`Error when downloading proto file from ${url}: ${err.message}`)
+      reject(new Error(`Error when downloading proto file from ${url}: ${err.message}`))
     })
   })
 }
-

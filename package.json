@@ -7,8 +7,8 @@
   "scripts": {
     "dev": "nodemon src/server/app.js --exec babel-node --presets env",
     "start": "babel-node src/server/app.js --presets env",
-    "lint": "eslint --ext .js,.vue src",
-    "lintfix": "eslint --fix --ext .js,.vue src"
+    "lint": "eslint --ext .js src",
+    "lintfix": "eslint --fix --ext .js src"
   },
   "author": "",
   "license": "ISC",
@@ -37,5 +37,15 @@
     "uuid": "^3.2.1",
     "vue-awesome": "^2.3.7",
     "winston": "^2.4.2"
+  },
+  "devDependencies": {
+    "babel-eslint": "^8.2.3",
+    "eslint": "^4.19.1",
+    "eslint-config-standard": "^11.0.0",
+    "eslint-plugin-import": "^2.12.0",
+    "eslint-plugin-node": "^6.0.1",
+    "eslint-plugin-promise": "^3.8.0",
+    "eslint-plugin-standard": "^3.1.0",
+    "nodemon": "^1.17.5"
   }
 }
