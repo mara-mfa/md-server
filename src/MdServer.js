@@ -4,8 +4,6 @@ import cookieSession from 'cookie-session'
 import bodyParser from 'body-parser'
 import passport from 'passport'
 import http from 'http'
-import NATS from 'nats'
-import MdMessageHub from 'md-lib/server/MdMessageHub'
 import mdRoute from './routes/index'
 import authRoute from './auth'
 import log from './logger'
@@ -31,22 +29,22 @@ export default class MdServer {
   }
 
   listen () {
-    if (!this.DISABLE_NATS) {
-      this.nats = NATS.connect(this.MSGHUB_SERVER)
-    }
-
     var cookieSes = cookieSession({
       name: 'mdesktop', keys: [this.SESSION_SECRET], maxAge: 24 * 60 * 60 * 1000
     })
 
-    global.mdHub = new MdMessageHub(this.MSGHUB_ID, this.MSGHUB_CLIENT)
+
     if (!this.DISABLE_NATS) {
+      const MdMessageHub = require('md-lib/server/MdMessageHub')
+      global.mdHub = new MdMessageHub.default(this.MSGHUB_ID, this.MSGHUB_CLIENT)
       global.mdHub.connect(this.MSGHUB_SERVER).then(() => {
         log.info(`Successfully connected to messaging server ${this.MSGHUB_SERVER}`)
       }, (err) => {
         log.error(`Error when connecting to messaging server ${this.MSGHUB_SERVER}`, err)
         process.exit(1)
       })
+    } else {
+      log.warn(`NATS disabled by DISABLE_NATS = ${this.DISABLE_NATS}`)
     }
 
     let app = express()
@@ -147,7 +145,7 @@ export default class MdServer {
   }
 
   registerNats () {
-    this.nats.subscribe('ws.broadcast.>', (msg, reply, subject) => {
+    global.mdHub.subscribe('ws.broadcast.>', (msg, reply, subject) => {
       let wsSubject = subject.replace(/ws\.broadcast\./, '')
       log.silly('Received broadcast request: ' + wsSubject + ' (nats: ' + subject + ')')
       let qMsg = JSON.parse(msg)
@@ -156,7 +154,7 @@ export default class MdServer {
       this.io.emit(wsSubject, qMsg)
     })
 
-    this.nats.subscribe(this.MSGHUB_ID + '.ws.>', (msg, reply, subject) => {
+    global.mdHub.subscribe(this.MSGHUB_ID + '.ws.>', (msg, reply, subject) => {
       var wsSubject = subject.replace(this.MSGHUB_ID + '.ws.', '')
       log.silly('Received ws coms: ' + wsSubject + ' (nats: ' + subject + ')')
       this.io.emit(wsSubject, msg)
@@ -168,7 +166,7 @@ export default class MdServer {
       log.error(err.message)
       log.debug(err)
     }
-    this.nats && this.nats.close()
+    global.mdHub && global.mdHub.close()
     process.exit(0)
   }
 }
