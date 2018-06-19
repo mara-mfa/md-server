@@ -49,6 +49,7 @@ async function handleApiCall (req, res, next) {
 
     if (!protoDict[protoLocation]) {
       let protoFile = await loadProtoFile(protoLocation)
+      log.debug(`GRPC proto file stored:  ${protofile}`)
       protoDict[protoLocation] = protoLoader.loadSync(protoFile, {})
     }
 
