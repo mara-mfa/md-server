@@ -9,11 +9,9 @@ import log from './logger'
 import socket from 'socket.io'
 import proxy from 'http-proxy-middleware'
 
-const defaultConfig = require('../config/default')
-
 export default class MdServer {
   constructor (mdConfig) {
-    this.config = mdConfig || defaultConfig
+    this.config = mdConfig || require('config')
 
     this.DISABLE_NATS = process.env.DISABLE_NATS || 0
     this.DISABLE_PROXY = process.env.DISABLE_PROXY || 0
