@@ -1,7 +1,7 @@
 {
   "port": 8080,
   "proxies": {
-    "/lambda-portlet": "https://6fun4n0qa2.execute-api.eu-west-1.amazonaws.com/dev/",
+    "lambda-portlet": "https://6fun4n0qa2.execute-api.eu-west-1.amazonaws.com/dev/",
     "mdMonitor": "http://localhost:9092/",
     "vuePortlet": "http://localhost:9093/"
   },

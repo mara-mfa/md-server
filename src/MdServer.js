@@ -114,8 +114,8 @@ export default class MdServer {
     Object.keys(proxyList).forEach((src) => {
       var target = proxyList[src]
       var pathRewriteValue = {}
-      pathRewriteValue['^' + src] = '/'
-      app.use(src, proxy({
+      pathRewriteValue['^/' + src] = '/'
+      app.use('/' + src, proxy({
         target: target,
         changeOrigin: true,
         ws: false,
