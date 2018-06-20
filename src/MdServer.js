@@ -115,7 +115,7 @@ export default class MdServer {
       var target = proxyList[src]
       var pathRewriteValue = {}
       pathRewriteValue['^/' + src] = '/'
-      app.use('/' + src, proxy({
+      app.use('/' + src.replace(/^\//, ''), proxy({
         target: target,
         changeOrigin: true,
         ws: false,
