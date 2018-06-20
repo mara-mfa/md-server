@@ -1,19 +1,10 @@
 {
   "port": 8080,
-  "proxies": [
-    {
-      "source": "/lambda-portlet",
-      "target": "https://6fun4n0qa2.execute-api.eu-west-1.amazonaws.com/dev/"
-    },
-    {
-      "source": "/mdMonitor",
-      "target": "http://localhost:9092/"
-    },
-    {
-      "source": "/vuePortlet",
-      "target": "http://localhost:9093/"
-    }
-  ],
+  "proxies": {
+    "/lambda-portlet": "https://6fun4n0qa2.execute-api.eu-west-1.amazonaws.com/dev/",
+    "mdMonitor": "http://localhost:9092/",
+    "vuePortlet": "http://localhost:9093/"
+  },
   "sources": [
     "http://localhost:9092/",
     "http://localhost:9093/"

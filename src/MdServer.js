@@ -103,20 +103,16 @@ export default class MdServer {
   }
 
   registerProxies (app) {
-    let proxyList = (this.DISABLE_PROXY ? [] : this.PROXIES) || []
+    let proxyList = (this.DISABLE_PROXY ? {} : this.PROXIES) || {}
     if (this.WEB_CLIENT) {
-      proxyList.push({
-        source: '/',
-        target: this.WEB_CLIENT
-      })
+      proxyList['/'] = this.WEB_CLIENT
       log.info(`'root (/) is pointing to web client on address ${this.WEB_CLIENT} and will be accessible on '/'`)
     } else {
       log.warn('WEB_CLIENT is not defined. There will be no web client')
     }
 
-    proxyList.forEach((proxyItem) => {
-      var src = proxyItem.source
-      var target = proxyItem.target
+    Object.keys(proxyList).forEach((src) => {
+      var target = proxyList[src]
       var pathRewriteValue = {}
       pathRewriteValue['^' + src] = '/'
       app.use(src, proxy({
