@@ -1,8 +1,8 @@
 import MdServer from './MdServer'
 import config from 'config'
-import mdWebClient from 'md-web-client'
+import MdWebClient from 'md-web-client'
 
-
+const mdWebClient = new MdWebClient()
 const mdServer = new MdServer()
 mdServer.DISABLE_AUTH = 1
 mdServer.DISABLE_NATS = 0

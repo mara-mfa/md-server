@@ -1,4 +1,3 @@
-import config from 'config'
 import express from 'express'
 import cookieSession from 'cookie-session'
 import bodyParser from 'body-parser'
@@ -10,8 +9,12 @@ import log from './logger'
 import socket from 'socket.io'
 import proxy from 'http-proxy-middleware'
 
+const defaultConfig = require('../config/default')
+
 export default class MdServer {
-  constructor () {
+  constructor (mdConfig) {
+    this.config = mdConfig || defaultConfig
+
     this.DISABLE_NATS = process.env.DISABLE_NATS || 0
     this.DISABLE_PROXY = process.env.DISABLE_PROXY || 0
     this.DISABLE_AUTH = process.env.DISABLE_AUTH || 0
@@ -22,10 +25,17 @@ export default class MdServer {
     this.MSGHUB_ID = process.env.MSGHUB_ID || 'mdesktop'
     this.MSGHUB_CLIENT = process.env.MSGHUB_CLIENT || 'mdesktop'
     this.SESSION_SECRET = process.env.SESSION_SECRET || 'jcIp866jEH'
-    this.PORT = process.env.PORT || config.PORT || 8080
+    this.PORT = process.env.PORT || 8080
     this.GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID || ''
     this.GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET || ''
-    this.AUTH_CALLBACK_URL = process.env.AUTH_CALLBACK_URL || config.AUTH_CALLBACK_URL || ''
+    this.AUTH_CALLBACK_URL = process.env.AUTH_CALLBACK_URL || ''
+
+    this.LAYOUT = this.config.layout
+    this.PORTLETS = this.config.portlets
+    this.PROXIES = this.config.proxies
+    this.SOURCES = this.config.sources
+
+
   }
 
   listen () {
@@ -53,6 +63,12 @@ export default class MdServer {
     app.use(bodyParser.urlencoded({extended: false}))
     app.use(passport.initialize())
     app.use(passport.session())
+    app.use('*', (req, res, next) => {
+      req.LAYOUT = this.LAYOUT
+      req.SOURCES = this.SOURCES
+      req.PORTLETS = this.PORTLETS
+      next()
+    })
     app.use('/auth', authRoute.getRoutes(this.DISABLE_AUTH, this.GOOGLE_CLIENT_ID, this.GOOGLE_CLIENT_SECRET, this.AUTH_CALLBACK_URL))
 
     app.use('*', (req, res, next) => {
@@ -77,7 +93,7 @@ export default class MdServer {
       if (err) {
         log.error('Error when starting the server: ' + err)
       }
-      log.info(`mDesktop Server running on port ${this.PORT}`)
+      log.info(`mDesktop Server running on http://localhost:${this.PORT}`)
     })
 
     // Cleanup
@@ -89,7 +105,7 @@ export default class MdServer {
   }
 
   registerProxies (app) {
-    let proxyList = this.DISABLE_PROXY ? [] : config.proxies
+    let proxyList = (this.DISABLE_PROXY ? [] : this.PROXIES) || []
     if (this.WEB_CLIENT) {
       proxyList.push({
         source: '/',

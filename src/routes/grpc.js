@@ -1,13 +1,10 @@
 import grpc from 'grpc'
 import express from 'express'
-import config from 'config'
-
 import log from '../logger'
 const tempy = require('tempy')
 const http = require('http')
 const fs = require('fs')
 const router = express.Router()
-const protoLoader = require('@grpc/proto-loader')
 
 let protoDict = {}
 
@@ -35,7 +32,7 @@ async function handleApiCall (req, res, next) {
       auth: req.user
     }
 
-    let grpcDef = (config.portlets[component] || {}).grpc
+    let grpcDef = (req.PORTLETS[component] || {}).grpc
     if (!grpcDef) {
       throw new Error(`Missing GRPC definition for component '${component}'`)
     }
@@ -48,6 +45,7 @@ async function handleApiCall (req, res, next) {
     if (!protoDict[protoLocation]) {
       let protoFile = await loadProtoFile(protoLocation)
       log.debug(`GRPC proto file stored:  ${protoFile}`)
+      const protoLoader = require('@grpc/proto-loader')
       protoDict[protoLocation] = protoLoader.loadSync(protoFile, {})
     }
 

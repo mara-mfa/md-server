@@ -1,17 +1,15 @@
 import express from 'express'
-import config from 'config'
 import axios from 'axios/index'
 import log from '../logger'
 const router = express.Router()
 
 var portletSources = null
 router.get('/', (req, res, next) => {
-  // res.send(config.portlets || []);
-  res.send(config.portlets)
+  res.send(req.PORTLETS)
 })
 
 router.get('/sources', async (req, res, next) => {
-  portletSources = await getPortletSources()
+  portletSources = await getPortletSources(req.SOURCES)
   // if (!portletSources) {
   //   portletSources = await getPortletSources()
   // }
@@ -20,24 +18,24 @@ router.get('/sources', async (req, res, next) => {
 })
 
 router.get('/:id/', (req, res, next) => {
-  res.send(config.portlets[req.params.id])
+  res.send(req.PORTLETS[req.params.id])
 })
 
-async function getPortletSources () {
+async function getPortletSources (sources) {
   return new Promise(async (resolve, reject) => {
     let results = ''
-    for (let i = 0; i < (config.sources || []).length; i++) {
+    for (let i = 0; i < (sources || []).length; i++) {
       try {
-        log.info('Getting remote source: ' + config.sources[i])
+        log.info('Getting remote source: ' + sources[i])
         let portletSource = await axios({
           method: 'get',
-          url: config.sources[i],
+          url: sources[i],
           timeout: 3000
         })
         results += portletSource.data
       } catch (err) {
-        log.error('Cannot load sources from ' + config.sources[i] + ' (' + err.message + ')')
-        results += 'console.warn("Server error: cannot load sources from: ' + config.sources[i] + '");'
+        log.error('Cannot load sources from ' + sources[i] + ' (' + err.message + ')')
+        results += 'console.warn("Server error: cannot load sources from: ' + sources[i] + '");'
       }
     }
     log.info('Available sources loaded')
