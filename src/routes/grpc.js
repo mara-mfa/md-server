@@ -65,7 +65,7 @@ async function handleApiCall (req, res, next) {
     }
 
     let methodSignature = `${defaultPackage}.${defaultServiceName}.${method} (endpoint: ${endPoint})`
-    log.debug(`Calling ${methodSignature}`)
+    log.silly(`Calling ${methodSignature}`)
 
     let methodCall = ::grcpClient[method]
     let methodParams = {
@@ -80,7 +80,7 @@ async function handleApiCall (req, res, next) {
         res.status(500).send(err.message)
         return
       }
-      log.debug(`... response from ${methodSignature}`)
+      log.silly(`... response from ${methodSignature}`)
       res.send(response.message)
     })
   } catch (err) {

@@ -164,7 +164,7 @@ export default class MdServer {
       log.error(err.message)
       log.debug(err)
     }
-    global.mdHub && global.mdHub.close()
+    global.mdHub && global.mdHub.close && global.mdHub.close()
     process.exit(0)
   }
 }

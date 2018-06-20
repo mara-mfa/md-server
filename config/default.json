@@ -41,55 +41,6 @@
       "grpc": "vue-portlet:50051"
     }
   },
-  "portlets_arr": [
-    {
-      "id": "mdMonitor",
-      "type": "js",
-      "name": "MD Monitor",
-      "class": "mdMonitor.MdMonitor"
-    },
-    {
-      "id": "vuePortlet",
-      "class": "vuePortlet",
-      "type": "vue",
-      "name": "Vue Component"
-    },
-    {
-      "id": "testPortlet",
-      "name": "Test Portlet",
-      "type": "js",
-      "class": "portlet.TestPortlet"
-    },
-    {
-      "id": "reutersBusinessPortlet",
-      "type": "js",
-      "name": "Reuters Business",
-      "url": "/lambda-portlet/rss",
-      "class": "rssPortlet.RssPortlet",
-      "rssUrl": "http://feeds.reuters.com/reuters/technologyNews"
-    },
-    {
-      "id": "bbcRssPortlet",
-      "name": "BBC News",
-      "url": "/lambda-portlet/rss",
-      "class": "rssPortlet.RssPortlet",
-      "rssUrl": "http://feeds.bbci.co.uk/news/rss.xml"
-    },
-    {
-      "id": "osInfoPortlet",
-      "type": "js",
-      "name": "OS Info",
-      "url": "/lambda-portlet/os",
-      "class": "osPortlet.OsPortlet"
-    },
-    {
-      "id": "chartPortlet",
-      "type": "js",
-      "name": "Chart Portlet",
-      "url": "/aws/chart",
-      "class": "chartPortlet.ChartPortlet"
-    }
-  ],
   "layout": [
     {"x": 0, "y": 0, "w": 2, "h": 2, "i": "mdMonitor"},
     {"x": 2, "y": 0, "w": 2, "h": 2, "i": "vuePortlet"}
