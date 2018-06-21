@@ -63,6 +63,7 @@ export default class MdServer {
   loadModules() {
     Object.keys(this.modules).forEach((modKey) => {
       let mod = this.modules[modKey]
+      log.info(`Initializing module ${modKey}`)
       mod.initialize()
     })
   }

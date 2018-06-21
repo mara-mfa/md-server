@@ -39,7 +39,7 @@ export default class WebServer extends Module {
 
 
 
-    this._app.use('/md', mdRoute)
+    //this._app.use('/md', mdRoute)
 
   }
 
