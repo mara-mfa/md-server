@@ -1,0 +1,13 @@
+/.idea/
+/build/
+/src/
+.babelrc
+.dockerignore
+.editorconfig
+.eslintignore
+.eslintrc.js
+.gitignore
+.npmignore
+DockerFile
+package-lock.json
+setvars.sh

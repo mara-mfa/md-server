@@ -1,16 +1,20 @@
 {
-  "name": "mdesktop-server",
-  "version": "1.0.0",
-  "description": "MDesktop server application",
-  "respository": "https://bitbucket.org/praguematica/mdesktop-server/",
-  "main": "src/server/app.js",
+  "name": "@pgmtc/md-server",
+  "version": "1.1.3",
+  "description": "md-server server application",
+  "repository": "https://github.com/pgmtc/md-server",
+  "main": "lib/index.js",
   "scripts": {
-    "dev": "nodemon src/server/app.js --exec babel-node --presets env",
-    "start": "babel-node src/server/app.js --presets env",
+    "dev": "nodemon src/server.js --exec babel-node --presets env",
+    "dev-cli": "nodemon src/cli.js --exec babel-node --presets env",
+    "start": "babel-node src/server.js --presets env",
     "lint": "eslint --ext .js src",
-    "lintfix": "eslint --fix --ext .js src"
+    "lintfix": "eslint --fix --ext .js src",
+    "build": "babel -s inline -d . src -d lib",
+    "prepublish": "npm run build",
+    "postpublish": "rm -rf ./lib"
   },
-  "author": "",
+  "author": "Praguematica Ltd",
   "license": "ISC",
   "dependencies": {
     "@grpc/proto-loader": "^0.1.0",
@@ -27,15 +31,14 @@
     "grpc": "^1.13.0-pre1",
     "http-proxy-middleware": "^0.18.0",
     "ip": "^1.1.5",
-    "md-lib": "^1.4.18",
+    "md-lib": "^1.4.19",
     "morgan": "^1.9.0",
-    "nats": "^0.8.10",
+    "nats": "^1.0.0",
     "passport": "^0.4.0",
     "passport-google-oauth20": "^1.0.0",
     "socket.io": "^2.1.1",
     "tempy": "^0.2.1",
     "uuid": "^3.2.1",
-    "vue-awesome": "^2.3.7",
     "winston": "^2.4.2"
   },
   "devDependencies": {

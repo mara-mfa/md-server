@@ -27,7 +27,7 @@ async function handleApiCall (req, res, next) {
   // Invoke function
   try {
     let endpoint = MSGHUB_ID + '.' + component + '.' + method
-    log.debug(`Invoking ${endpoint}`)
+    log.silly(`Invoking ${endpoint}`)
     let results = await invoke(endpoint, params)
     res.send(results)
   } catch (err) {
