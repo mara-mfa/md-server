@@ -7,13 +7,14 @@ export default class MdServer {
   constructor (mdConfig) {
     this.mdConfig = mdConfig || require('config')
 
-    this.DISABLE_NATS = process.env.DISABLE_NATS || 0
-    this.DISABLE_PROXY = process.env.DISABLE_PROXY || 0
-    this.DISABLE_AUTH = process.env.DISABLE_AUTH || 0
-    this.DISABLE_SOCKETS = process.env.DISABLE_SOCKETS || 0
-    this.DISABLE_STORAGE = process.env.DISABLE_STORAGE || 0
-
     this.config = {}
+    this.config.DISABLE_NATS = process.env.DISABLE_NATS || 0
+    this.config.DISABLE_PROXY = process.env.DISABLE_PROXY || 0
+    this.config.DISABLE_AUTH = process.env.DISABLE_AUTH || 0
+    this.config.DISABLE_SOCKETS = process.env.DISABLE_SOCKETS || 0
+    this.config.DISABLE_STORAGE = process.env.DISABLE_STORAGE || 0
+    this.config.DISABLE_GRPC = process.env.DISABLE_GRPC || 0
+
     this.config.WEB_CLIENT = process.env.WEB_CLIENT
     this.config.MSGHUB_SERVER = process.env.MSGHUB_SERVER || 'nats://localhost:4222'
     this.config.MSGHUB_ID = process.env.MSGHUB_ID || 'mdesktop'
@@ -32,11 +33,12 @@ export default class MdServer {
     // Register modules
     this.modules = {}
     this.use('webServer', require('./mod/webServer'))
-    if (!this.DISABLE_AUTH) this.use('auth', require('./mod/auth'))
-    if (!this.DISABLE_NATS) this.use('nats', require('./mod/nats'))
-    if (!this.DISABLE_PROXY) this.use('proxy', require('./mod/proxy'))
-    if (!this.DISABLE_SOCKETS) this.use('sockets', require('./mod/sockets'))
-    if (!this.DISABLE_STORAGE) this.use('storage', require('./mod/storage'))
+    if (!this.config.DISABLE_AUTH) this.use('auth', require('./mod/auth'))
+    if (!this.config.DISABLE_NATS) this.use('nats', require('./mod/nats'))
+    if (!this.config.DISABLE_SOCKETS) this.use('sockets', require('./mod/sockets'))
+    if (!this.config.DISABLE_STORAGE) this.use('storage', require('./mod/storage'))
+    this.use('router', require('./mod/router'))
+    if (!this.config.DISABLE_PROXY) this.use('proxy', require('./mod/proxy'))
 
     this.loadModules()
   }
@@ -80,6 +82,8 @@ export default class MdServer {
     process.on('SIGUSR1', this.exitHandler(0))
     process.on('SIGUSR2', this.exitHandler(0))
     process.on('uncaughtException', this.exitHandler(1))
+    process.on('unhandledRejection', this.exitHandler(1));
+
     if (this.validateModules()) {
       this.startModules()
     }

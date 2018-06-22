@@ -16,9 +16,6 @@ export default class Auth extends Module {
         res.redirect('/auth/google')
         return
       }
-      if (config.DISABLE_AUTH) {
-        req.user = {id: 0, displayName: 'mockUser', email: 'mock@email.com'}
-      }
       next()
     })
   }

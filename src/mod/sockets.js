@@ -3,11 +3,15 @@ import log from "../logger"
 import socket from "socket.io"
 
 export default class Proxy extends Module {
+  get io () {
+    return this._io
+  }
+
   initialize() {
     let httpServer = this.modules.webServer.httpServer
-    let io = socket(httpServer)
-    // io.set('transports', ['websocket']);
-    io.on('connection', this.onIoConnection.bind(this))
+    this._io = socket(httpServer)
+    // this._io.set('transports', ['websocket']);
+    this._io.on('connection', this.onIoConnection.bind(this))
   }
 
   validate() {

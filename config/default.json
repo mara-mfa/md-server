@@ -25,7 +25,11 @@
       "class": "vuePortlet",
       "type": "vue",
       "name": "Vue Component",
-      "grpc": "vue-portlet:50051"
+      "grpc": "vue-portlet:50051",
+      "grpc": {
+        "endPoint": "localhost:50051",
+        "protoLocation": "http://localhost:9093/grpc"
+      }
     }
   },
   "layout": [

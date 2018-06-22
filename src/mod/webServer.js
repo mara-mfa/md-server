@@ -1,7 +1,6 @@
 import Module from "../Module"
 import bodyParser from "body-parser"
 import cookieSession from "cookie-session"
-import mdRoute from "../routes"
 import express from "express"
 import http from 'http'
 import log from "../logger"
@@ -31,19 +30,24 @@ export default class WebServer extends Module {
     this._app.use(cookieSes)
     this._app.use(bodyParser.urlencoded({extended: false}))
     this._app.use('*', (req, res, next) => {
-      req.LAYOUT = config.LAYOUT
-      req.SOURCES = config.SOURCES
-      req.PORTLETS = config.PORTLETS
+      if (config.DISABLE_AUTH) {
+        req.user = {id: 0, displayName: 'mockUser', email: 'mock@email.com'}
+      }
       next()
     })
-
-
-
-    //this._app.use('/md', mdRoute)
 
   }
 
   start() {
+    this._app.use(function (err, req, res, next) {
+      log.error(err.message)
+      log.silly(err)
+      res.status(500).send({
+        type: 'E',
+        message: err.message
+      })
+    })
+
     this._httpServer.listen(this.config.PORT, (err) => {
       if (err) {
         log.error('Error when starting the server: ' + err)
