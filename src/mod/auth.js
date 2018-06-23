@@ -1,21 +1,36 @@
-import authRoute from "../auth"
 import passport from "passport/lib/index"
 import Module from "../Module"
+import AuthRouter from "./routes/AuthRouter"
 
 export default class Auth extends Module {
 
   initialize() {
     let app = this.modules.webServer.app
     let config = this.config
+    config.DISABLE_AUTH ? this.disableAuth() : this.enableAuth()
+  }
 
+  enableAuth() {
+    let app = this.modules.webServer.app
+    let config = this.config
     app.use(passport.initialize())
     app.use(passport.session())
-    app.use('/auth', authRoute.getRoutes(config.DISABLE_AUTH, config.GOOGLE_CLIENT_ID, config.GOOGLE_CLIENT_SECRET, config.AUTH_CALLBACK_URL))
+    app.use('/auth', new AuthRouter(config.GOOGLE_CLIENT_ID, config.GOOGLE_CLIENT_SECRET, config.AUTH_CALLBACK_URL).router)
     app.use('*', (req, res, next) => {
-      if (!req.user && !config.DISABLE_AUTH) {
+      if (!req.user) {
         res.redirect('/auth/google')
         return
       }
+      next()
+    })
+  }
+
+  disableAuth() {
+    let app = this.modules.webServer.app
+    let config = this.config
+    // Add mock user to every request to simulate AUTH
+    app.use('*', (req, res, next) => {
+      req.user = {id: 0, displayName: 'mockUser', email: 'mock@email.com'}
       next()
     })
   }

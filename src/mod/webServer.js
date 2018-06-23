@@ -29,12 +29,6 @@ export default class WebServer extends Module {
     this._httpServer = http.Server(this._app)
     this._app.use(cookieSes)
     this._app.use(bodyParser.urlencoded({extended: false}))
-    this._app.use('*', (req, res, next) => {
-      if (config.DISABLE_AUTH) {
-        req.user = {id: 0, displayName: 'mockUser', email: 'mock@email.com'}
-      }
-      next()
-    })
 
   }
 

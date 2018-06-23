@@ -1,29 +1,28 @@
 import express from 'express'
-import passport from 'passport'
-import passgoogle from 'passport-google-oauth20'
-import log from '../logger'
+import log from '../../logger'
+import passgoogle from "passport-google-oauth20/lib/index"
+import passport from "passport/lib/index"
 
 export default class AuthRouter {
-  static getRoutes (DISABLE_AUTH, GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, AUTH_CALLBACK_URL) {
-    const router = express.Router()
+  get router() {
+    return this._router
+  }
+
+  constructor(GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, AUTH_CALLBACK_URL) {
+    this.GOOGLE_CLIENT_ID = GOOGLE_CLIENT_ID
+    this.GOOGLE_CLIENT_SECRET = GOOGLE_CLIENT_SECRET
+    this.AUTH_CALLBACK_URL = AUTH_CALLBACK_URL
+
     const GoogleStrategy = passgoogle.Strategy
 
     passport.serializeUser(function (user, done) {
       done(null, user)
     })
-
     passport.deserializeUser(function (user, done) {
       done(null, user)
     })
 
-    if ((!GOOGLE_CLIENT_ID || !GOOGLE_CLIENT_SECRET || !AUTH_CALLBACK_URL) && !DISABLE_AUTH) {
-      log.error('Missing environment variables related to google authentication')
-      log.error('Set GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET and AUTH_CALLBACK_URL')
-      log.error('or disable authentication by setting DISABLE_AUTH = 1')
-      process.exit(1)
-    }
-    if (!DISABLE_AUTH) {
-      passport.use(new GoogleStrategy({
+    passport.use(new GoogleStrategy({
         clientID: GOOGLE_CLIENT_ID.replace(/\r?\n|\r/, ''),
         clientSecret: GOOGLE_CLIENT_SECRET.replace(/\r?\n|\r/, ''),
         callbackURL: AUTH_CALLBACK_URL // "http://localhost:8080/auth/google"
@@ -38,10 +37,10 @@ export default class AuthRouter {
         //   return cb(err, user);
         // });
       }
-      ))
-
-      // Authenticate via google
-      router.get('/google', passport.authenticate('google', {
+    ))
+    this._router = express.Router()
+    // Authenticate via google
+    this._router.get('/google', passport.authenticate('google', {
         scope: [
           'https://www.googleapis.com/auth/userinfo.profile',
           'https://www.googleapis.com/auth/userinfo.email'],
@@ -53,14 +52,10 @@ export default class AuthRouter {
         res.redirect('/')
       })
 
-      router.get('/logout', function (req, res) {
-        req.logout()
-        res.redirect('/')
-      })
-    } else {
-      log.warn(`Authentication disabled by DISABLE_AUTH = ${DISABLE_AUTH}`)
-    }
-
-    return router
+    this._router.get('/logout', function (req, res) {
+      req.logout()
+      res.redirect('/')
+    })
   }
+
 }
