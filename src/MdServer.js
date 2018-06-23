@@ -33,10 +33,10 @@ export default class MdServer {
     // Register modules
     this.modules = {}
     this.use('webServer', require('./mod/webServer'))
+    if (!this.config.DISABLE_STORAGE) this.use('storage', require('./mod/storage'))
     this.use('auth', require('./mod/auth'))
     if (!this.config.DISABLE_NATS) this.use('nats', require('./mod/nats'))
     if (!this.config.DISABLE_SOCKETS) this.use('sockets', require('./mod/sockets'))
-    if (!this.config.DISABLE_STORAGE) this.use('storage', require('./mod/storage'))
     this.use('router', require('./mod/router'))
     if (!this.config.DISABLE_PROXY) this.use('proxy', require('./mod/proxy'))
 
@@ -52,7 +52,7 @@ export default class MdServer {
     let errMessages = []
     Object.keys(this.modules).forEach((modKey) => {
       let mod = this.modules[modKey]
-      errMessages.concat(mod.validate() || [])
+      errMessages = errMessages.concat(mod.validate() || [])
     })
     if (errMessages.length > 0) {
       errMessages.forEach((errMessage) => {
@@ -84,9 +84,10 @@ export default class MdServer {
     process.on('uncaughtException', this.exitHandler(1))
     process.on('unhandledRejection', this.exitHandler(1));
 
-    if (this.validateModules()) {
-      this.startModules()
+    if (!this.validateModules()) {
+      process.exit(1)
     }
+    this.startModules()
   }
 
   registerSocket (httpServer) {

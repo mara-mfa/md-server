@@ -2,13 +2,15 @@ import express from 'express'
 import log from '../../logger'
 import passgoogle from "passport-google-oauth20/lib/index"
 import passport from "passport/lib/index"
+import User from "../schema/User"
 
 export default class AuthRouter {
   get router() {
     return this._router
   }
 
-  constructor(GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, AUTH_CALLBACK_URL) {
+  constructor(storageModule, GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, AUTH_CALLBACK_URL) {
+    this.storageModule = storageModule
     this.GOOGLE_CLIENT_ID = GOOGLE_CLIENT_ID
     this.GOOGLE_CLIENT_SECRET = GOOGLE_CLIENT_SECRET
     this.AUTH_CALLBACK_URL = AUTH_CALLBACK_URL
@@ -27,13 +29,26 @@ export default class AuthRouter {
         clientSecret: GOOGLE_CLIENT_SECRET.replace(/\r?\n|\r/, ''),
         callbackURL: AUTH_CALLBACK_URL // "http://localhost:8080/auth/google"
       },
-      function (accessToken, refreshToken, profile, cb) {
-        cb(null, {
-          id: profile.id,
-          displayName: profile.displayName,
-          email: profile.emails[0].value
-        })
-        // User.findOrCreate({googleId: profile.id}, function (err, user) {
+      (accessToken, refreshToken, profile, cb) => {
+        // cb(null, {
+        //   id: profile.id,
+        //   displayName: profile.displayName,
+        //   email: profile.emails[0].value
+        // })
+        if (this.storageModule) {
+          this.storageModule.storeUser(profile, accessToken).then((user) => {
+            return cb(null, user)
+          })
+        } else {
+          log.warn('Storage module not available, user details not stored')
+          cb(null, profile)
+        }
+
+        // User.findOrCreate({
+        //   googleId: profile.id,
+        //   displayName: profile.displayName,
+        //   email: profile.emails[0].value
+        // }, function (err, user) {
         //   return cb(err, user);
         // });
       }

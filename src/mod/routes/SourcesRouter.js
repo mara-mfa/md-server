@@ -36,7 +36,7 @@ export default class SourcesRouter {
           })
           results += portletSource.data
         } catch (err) {
-          log.error('Cannot load sources from ' + sources[i] + ' (' + err.message + ')')
+          log.warn('Cannot load sources from ' + sources[i] + ' (' + err.message + ')')
           results += 'console.warn("Server error: cannot load sources from: ' + sources[i] + '");'
         }
       }

@@ -15,7 +15,7 @@ export default class Auth extends Module {
     let config = this.config
     app.use(passport.initialize())
     app.use(passport.session())
-    app.use('/auth', new AuthRouter(config.GOOGLE_CLIENT_ID, config.GOOGLE_CLIENT_SECRET, config.AUTH_CALLBACK_URL).router)
+    app.use('/auth', new AuthRouter(this.modules.storage, config.GOOGLE_CLIENT_ID, config.GOOGLE_CLIENT_SECRET, config.AUTH_CALLBACK_URL).router)
     app.use('*', (req, res, next) => {
       if (!req.user) {
         res.redirect('/auth/google')
