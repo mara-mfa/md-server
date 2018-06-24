@@ -14,3 +14,4 @@ yarn-error.log*
 
 setvars.sh
 setvars.bat
+lib/
