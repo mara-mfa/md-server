@@ -1,5 +1,5 @@
 import winston from 'winston'
-const level = process.env.LOG_LEVEL || 'debug'
+const level = process.env.LOG_LEVEL || 'info'
 
 export default new winston.Logger({
   transports: [

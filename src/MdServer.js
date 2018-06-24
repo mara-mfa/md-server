@@ -1,35 +1,13 @@
 import log from './logger'
 import socket from 'socket.io'
-import proxy from 'http-proxy-middleware'
-import path from 'path'
 
 export default class MdServer {
   constructor (mdConfig) {
-    this.mdConfig = mdConfig || require('config')
+    this.config = mdConfig
+    this.initialize()
+  }
 
-    this.config = {}
-    this.config.DISABLE_NATS = process.env.DISABLE_NATS || 0
-    this.config.DISABLE_PROXY = process.env.DISABLE_PROXY || 0
-    this.config.DISABLE_AUTH = process.env.DISABLE_AUTH || 0
-    this.config.DISABLE_SOCKETS = process.env.DISABLE_SOCKETS || 0
-    this.config.DISABLE_STORAGE = process.env.DISABLE_STORAGE || 0
-    this.config.DISABLE_GRPC = process.env.DISABLE_GRPC || 0
-
-    this.config.WEB_CLIENT = process.env.WEB_CLIENT
-    this.config.MSGHUB_SERVER = process.env.MSGHUB_SERVER || 'nats://localhost:4222'
-    this.config.MSGHUB_ID = process.env.MSGHUB_ID || 'mdesktop'
-    this.config.MSGHUB_CLIENT = process.env.MSGHUB_CLIENT || 'mdesktop'
-    this.config.SESSION_SECRET = process.env.SESSION_SECRET || 'jcIp866jEH'
-    this.config.PORT = process.env.PORT || 8080
-    this.config.GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID || ''
-    this.config.GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET || ''
-    this.config.AUTH_CALLBACK_URL = process.env.AUTH_CALLBACK_URL || ''
-    this.config.LAYOUT = this.mdConfig.layout
-    this.config.PORTLETS = this.mdConfig.portlets
-    this.config.PROXIES = this.mdConfig.proxies
-    this.config.SOURCES = this.mdConfig.sources
-    this.config.MONGODB_URL = process.env.MONGODB_URL
-
+  initialize () {
     // Register modules
     this.modules = {}
     this.use('webServer', require('./mod/webServer'))
@@ -40,11 +18,17 @@ export default class MdServer {
     this.use('router', require('./mod/router'))
     if (!this.config.DISABLE_PROXY) this.use('proxy', require('./mod/proxy'))
 
+    if (!this.validateModules()) {
+      process.exit(1)
+    }
+
     this.loadModules()
+    return this
   }
 
-  use(modId, module) {
-    let moduleInstance = new module.default(modId, this.modules, this.config)
+  use (modId, module) {
+    let ModuleClass = module.default
+    let moduleInstance = new ModuleClass(modId, this.modules, this.config)
     this.modules[modId] = moduleInstance
   }
 
@@ -62,7 +46,7 @@ export default class MdServer {
     return (errMessages || []).length === 0
   }
 
-  loadModules() {
+  loadModules () {
     Object.keys(this.modules).forEach((modKey) => {
       let mod = this.modules[modKey]
       log.info(`Initializing module ${modKey}`)
@@ -70,7 +54,7 @@ export default class MdServer {
     })
   }
 
-  startModules() {
+  startModules () {
     Object.keys(this.modules).forEach((modKey) => {
       let mod = this.modules[modKey]
       mod.start()
@@ -82,11 +66,8 @@ export default class MdServer {
     process.on('SIGUSR1', this.exitHandler(0))
     process.on('SIGUSR2', this.exitHandler(0))
     process.on('uncaughtException', this.exitHandler(1))
-    process.on('unhandledRejection', this.exitHandler(1));
+    process.on('unhandledRejection', this.exitHandler(1))
 
-    if (!this.validateModules()) {
-      process.exit(1)
-    }
     this.startModules()
   }
 

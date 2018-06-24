@@ -3,11 +3,11 @@ import MdUtils from '@pgmtc/md-lib/server/MdUtils'
 import log from '../../logger'
 
 export default class ApiRouter {
-  get router() {
+  get router () {
     return this._router
   }
 
-  constructor(MSGHUB_ID, mdHub) {
+  constructor (MSGHUB_ID, mdHub) {
     this.MSGHUB_ID = MSGHUB_ID
     this.mdHub = mdHub
     this._router = express.Router()
@@ -15,7 +15,7 @@ export default class ApiRouter {
     this._router.get('/:component/:method', ::this.handleApiCall)
   }
 
-  async handleApiCall(req, res, next) {
+  async handleApiCall (req, res, next) {
     // Parse properties
     var component = req.params.component
     var method = req.params.method

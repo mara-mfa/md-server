@@ -1,16 +1,16 @@
-import passport from "passport/lib/index"
-import Module from "../Module"
-import AuthRouter from "./routes/AuthRouter"
+import passport from 'passport/lib/index'
+import Module from '../Module'
+import AuthRouter from './routes/AuthRouter'
+import log from '../logger'
 
 export default class Auth extends Module {
-
-  initialize() {
-    let app = this.modules.webServer.app
+  initialize () {
     let config = this.config
+    config.DISABLE_AUTH ? log.warn('... bypassing AUTH as it is disabled') : log.info('... registering AUTH configuration and routes')
     config.DISABLE_AUTH ? this.disableAuth() : this.enableAuth()
   }
 
-  enableAuth() {
+  enableAuth () {
     let app = this.modules.webServer.app
     let config = this.config
     app.use(passport.initialize())
@@ -25,9 +25,8 @@ export default class Auth extends Module {
     })
   }
 
-  disableAuth() {
+  disableAuth () {
     let app = this.modules.webServer.app
-    let config = this.config
     // Add mock user to every request to simulate AUTH
     app.use('*', (req, res, next) => {
       req.user = {id: 0, displayName: 'mockUser', email: 'mock@email.com'}
@@ -35,7 +34,7 @@ export default class Auth extends Module {
     })
   }
 
-  validate() {
+  validate () {
     let config = this.config
     let errMessages = []
     if (!config.DISABLE_AUTH) {
@@ -44,5 +43,4 @@ export default class Auth extends Module {
     }
     return errMessages
   }
-
 }

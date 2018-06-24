@@ -2,17 +2,17 @@ import express from 'express'
 import log from '../../logger'
 
 export default class WsRouter {
-  get router() {
+  get router () {
     return this._router
   }
 
-  constructor(mdHub) {
+  constructor (mdHub) {
     this.mdHub = mdHub
     this._router = express.Router()
     this._router.get('/:queue/:msg', ::this.handleMessage)
   }
 
-  handleMessage(req, res, next) {
+  handleMessage (req, res, next) {
     var queue = req.params.queue
     var msg = JSON.parse(req.params.msg)
     var context = {

@@ -2,29 +2,26 @@ import express from 'express'
 import fs from 'fs'
 import http from 'http'
 import grpc from 'grpc'
-import MdUtils from '@pgmtc/md-lib/server/MdUtils'
 import log from '../../logger'
 const tempy = require('tempy')
 
 export default class GrpcRouter {
-  get router() {
+  get router () {
     return this._router
   }
 
-  constructor(PORTLETS) {
+  constructor (PORTLETS) {
     this.PORTLETS = PORTLETS
     this._router = express.Router()
     this._router.get('/:component/:method/:params', ::this.handleApiCall)
     this._router.get('/:component/:method', ::this.handleApiCall)
 
     this.protoDict = {}
-
   }
 
-  async handleApiCall(req, res, next) {
+  async handleApiCall (req, res, next) {
     var component = req.params.component
     var method = req.params.method
-    var params = JSON.parse(decodeURIComponent(req.params.params || '{}'))
 
     let grpcDef = (this.PORTLETS[component] || {}).grpc
     if (!grpcDef) {
@@ -79,7 +76,6 @@ export default class GrpcRouter {
       log.silly(`... response from ${methodSignature}`)
       res.send(response.message)
     })
-
   }
 
   loadProtoFile (url) {
@@ -100,27 +96,5 @@ export default class GrpcRouter {
         reject(new Error(`Error when downloading proto file from ${url}: ${err.message}`))
       })
     })
-  }
-
-  handleApiCall_old(req, res, next) {
-    // Parse properties
-    var component = req.params.component
-    var method = req.params.method
-    var params = MdUtils.decodeApiParams(req.params.params)
-
-    if (!this.mdHub) {
-      throw new Error(`Error when invoking ${component}.${method}(...): Cannot access message hub (NATS is either disabled or there is some other problem)`)
-    }
-
-    // Inject context
-    params = Array.isArray(params) ? params : [params]
-    params.unshift({ auth: req.user })
-
-    // Invoke remote endpoint
-    let endpoint = this.MSGHUB_ID + '.' + component + '.' + method
-    log.silly(`Invoking remote function ${endpoint}(...)`)
-    let promise = this.mdHub
-      .invoke.apply(this.mdHub, [endpoint].concat(params))
-      .then(::res.send, next)
   }
 }

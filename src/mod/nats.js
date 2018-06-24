@@ -1,12 +1,12 @@
-import Module from "../Module"
-import log from "../logger"
+import Module from '../Module'
+import log from '../logger'
 
 export default class Nats extends Module {
-  get mdHub() {
+  get mdHub () {
     return this._mdHub
   }
 
-  initialize() {
+  initialize () {
     const MdMessageHub = require('@pgmtc/md-lib/server/MdMessageHub').default
     this._mdHub = new MdMessageHub(this.config.MSGHUB_ID, this.config.MSGHUB_CLIENT)
     this._mdHub.connect(this.config.MSGHUB_SERVER).then(() => {
@@ -42,10 +42,8 @@ export default class Nats extends Module {
     })
   }
 
-  validate() {
-    let config = this.config
+  validate () {
     let errMessages = []
-
     return errMessages
   }
 }

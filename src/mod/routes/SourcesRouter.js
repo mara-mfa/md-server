@@ -1,13 +1,13 @@
 import express from 'express'
 import log from '../../logger'
-import axios from "axios/index"
+import axios from 'axios/index'
 
 export default class SourcesRouter {
-  get router() {
+  get router () {
     return this._router
   }
 
-  constructor(SOURCES) {
+  constructor (SOURCES) {
     this.SOURCES = SOURCES
     this._router = express.Router()
     this.load()
@@ -19,7 +19,7 @@ export default class SourcesRouter {
     })
   }
 
-  async load() {
+  async load () {
     this._portletSources = await this.getPortletSources(this.SOURCES)
   }
 

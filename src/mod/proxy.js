@@ -1,9 +1,9 @@
-import Module from "../Module"
-import log from "../logger"
-import proxy from "http-proxy-middleware"
+import Module from '../Module'
+import log from '../logger'
+import proxy from 'http-proxy-middleware'
 
 export default class Proxy extends Module {
-  initialize() {
+  initialize () {
     let config = this.config
     let app = this.modules.webServer.app
     let proxyList = (config.DISABLE_PROXY ? {} : config.PROXIES) || {}
@@ -32,14 +32,14 @@ export default class Proxy extends Module {
     })
   }
 
-  validate() {
+  validate () {
     let config = this.config
     let errMessages = []
     if (!config.WEB_CLIENT) log.warn('WEB_CLIENT is not defined. There will be no web client')
     return errMessages
   }
 
-  start() {
+  start () {
 
   }
 }
