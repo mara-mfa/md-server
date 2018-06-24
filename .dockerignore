@@ -1,4 +1,4 @@
-node_modules
+zznode_modules
 npm-debug.log
 Dockerfile
 docker-compose.yml
