@@ -11,7 +11,7 @@
     "lint": "eslint --ext .js src",
     "lintfix": "eslint --fix --ext .js src",
     "build": "babel -s inline -d . src -d lib",
-    "prepublish": "npm run build",
+    "prepublishOnly": "npm run build",
     "postpublish": "rm -rf ./lib"
   },
   "author": "Praguematica Ltd",
