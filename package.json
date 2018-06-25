@@ -1,6 +1,6 @@
 {
   "name": "@pgmtc/md-server",
-  "version": "1.0.0",
+  "version": "1.2.0",
   "description": "md-server server application",
   "repository": "https://github.com/pgmtc/md-server",
   "main": "lib/index.js",
