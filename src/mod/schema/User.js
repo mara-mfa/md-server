@@ -24,6 +24,8 @@ schema.statics.findOrCreate = function (profile) {
         user.save((err, user) => {
           if (err) {
             reject(err)
+          } else {
+            resolve(user)
           }
         })
       } else {
