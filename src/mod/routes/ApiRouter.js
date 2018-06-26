@@ -37,7 +37,7 @@ export default class ApiRouter {
       let results = await this.mdHub.invoke.apply(this.mdHub, [endpoint].concat(params))
       res.send(results)
     } catch (err) {
-      next(err)
+      return next(err)
     }
   }
 }

@@ -22,6 +22,15 @@ export default class GrpcRouter {
   async handleApiCall (req, res, next) {
     var component = req.params.component
     var method = req.params.method
+    var params = {}
+
+    if (params) {
+      try {
+        params = JSON.parse(req.params.params)
+      } catch (err) {
+        return next(new Error('Error when parsing parameters', err))
+      }
+    }
 
     let grpcDef = (this.PORTLETS[component] || {}).grpc
     if (!grpcDef) {
@@ -61,17 +70,13 @@ export default class GrpcRouter {
     log.silly(`Calling ${methodSignature}`)
 
     let methodCall = ::grcpClient[method]
-    let methodParams = {
-      name: 'MDESKTOP',
-      _userId: req.user.id,
-      _userEmail: req.user.email
-    }
+    let methodParams = params
+    methodParams._userId = req.user.id
+    methodParams._userEmail = req.user.email
 
     methodCall(methodParams, (err, response) => {
       if (err) {
-        log.error('Error when calling grpc: ' + err.message)
-        res.status(500).send(err.message)
-        return
+        return next(err)
       }
       log.silly(`... response from ${methodSignature}`)
       res.send(response.message)
