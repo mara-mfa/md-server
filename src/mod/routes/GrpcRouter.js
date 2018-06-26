@@ -79,7 +79,7 @@ export default class GrpcRouter {
         return next(err)
       }
       log.silly(`... response from ${methodSignature}`)
-      res.send(response.message)
+      res.send(response)
     })
   }
 
